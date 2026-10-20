@@ -14,7 +14,7 @@ public class Server {
             while (true) {
                 Socket socket = server.accept();
                 System.out.println("Client connesso: " + socket.getInetAddress() + ":" + socket.getPort());
-                new ThreadOracolo(socket).start();
+                new ThreadScelta(socket).start();
             }
         } catch (IOException e) {
             System.out.println("Errore server: " + e.getMessage());
