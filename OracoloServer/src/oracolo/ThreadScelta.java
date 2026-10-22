@@ -62,7 +62,6 @@ public class ThreadScelta extends Thread {
             case "1": return new ThreadOracolo(socket);
             case "2": return new ThreadRomano(socket);
             case "3": return new ThreadImprenditore(socket);
-            case "4": return new ThreadTrio(socket);
             default:  return null;
         }
     }
