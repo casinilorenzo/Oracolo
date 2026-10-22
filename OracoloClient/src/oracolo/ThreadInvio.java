@@ -19,6 +19,7 @@ public class ThreadInvio extends Thread {
 
     @Override
     public void run() {
+        boolean uscita = false; // true dopo "esci": e il server a chiudere la connessione
         try {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8);
             while (!socket.isClosed()) {
@@ -31,12 +32,14 @@ public class ThreadInvio extends Thread {
                 String messaggio = TASTIERA.readLine();
                 if (messaggio == null) break;
                 out.println(messaggio);
-                if (out.checkError() || messaggio.equalsIgnoreCase("fine")) {
-                    socket.close();
+                if (out.checkError()) break;
+                // "fine" non chiude piu la connessione (passa a un nuovo utente): solo "esci" la chiude.
+                if (messaggio.trim().equalsIgnoreCase("esci")) {
+                    uscita = true;
                     break;
                 }
             }
-            if (!socket.isClosed()) socket.close();
+            if (!uscita && !socket.isClosed()) socket.close();
         } catch (IOException e) {
             if (!socket.isClosed()) System.out.println("Errore invio: " + e.getMessage());
         } catch (InterruptedException e) {
