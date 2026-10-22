@@ -8,10 +8,15 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Prima parte della connessione: chiede al client quale oracolo vuole
- * e poi passa la conversazione alla personalita scelta.
+ * Gestisce la connessione di un client: chiede quale oracolo vuole,
+ * gli passa la conversazione e, se il client scrive "cambia", torna
+ * al menu per scegliere un'altra personalita'.
  */
 public class ThreadScelta extends Thread {
+    private static final String MENU =
+            "Scegli l'oracolo: 1 = Classico, 2 = Romano antico, "
+            + "3 = Imprenditore milanese, 4 = Trio comico (scrivi 'fine' per uscire).";
+
     private final Socket socket;
 
     public ThreadScelta(Socket socket) {
@@ -21,28 +26,31 @@ public class ThreadScelta extends Thread {
     @Override
     public void run() {
         String client = socket.getInetAddress() + ":" + socket.getPort();
-        try {
+        try (Socket s = socket) {
             BufferedReader in = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8);
+                    new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8));
+            PrintWriter out = new PrintWriter(s.getOutputStream(), true, StandardCharsets.UTF_8);
 
-            out.println("Scegli l'oracolo: 1 = Classico, 2 = Romano antico, "
-                    + "3 = Imprenditore milanese, 4 = Trio comico (scrivi 'fine' per uscire).");
+            out.println(MENU);
 
             String scelta;
             while ((scelta = in.readLine()) != null) {
                 scelta = scelta.trim();
                 if (scelta.equalsIgnoreCase("fine")) break;
+
                 ThreadOracolo oracolo = creaOracolo(scelta);
-                if (oracolo != null) {
-                    // run() e non start(): questo thread e gia dedicato a questo client.
-                    // L'oracolo scelto chiude il socket quando la conversazione finisce.
-                    oracolo.run();
-                    return;
+                if (oracolo == null) {
+                    out.println("Scelta non valida: scrivi un numero da 1 a 4.");
+                    continue;
                 }
-                out.println("Scelta non valida: scrivi un numero da 1 a 4.");
+
+                // conversa() e non start(): questo thread e gia dedicato a questo client.
+                ThreadOracolo.Esito esito = oracolo.conversa(in, out);
+                if (esito == ThreadOracolo.Esito.FINE) break;
+
+                // CAMBIA: si torna al menu.
+                out.println(MENU);
             }
-            socket.close();
         } catch (IOException e) {
             System.out.println("Errore con " + client + ": " + e.getMessage());
         }

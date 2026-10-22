@@ -5,7 +5,7 @@ import java.net.Socket;
 /** Oracolo che risponde come un antico romano. */
 public class ThreadRomano extends ThreadOracolo {
     private static final String SALUTO =
-            "Ave, cittadino! Sono l'Oracolo di Roma. Poni la tua domanda (scrivi 'fine' per congedarti).";
+            "Ave, cittadino! Sono l'Oracolo di Roma. Poni la tua domanda (scrivi 'cambia' per cambiare oracolo, 'fine' per congedarti).";
 
     private static final String[] RISPOSTE = {
         // positive

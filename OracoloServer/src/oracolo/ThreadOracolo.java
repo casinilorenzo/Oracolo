@@ -2,21 +2,26 @@ package oracolo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Gestisce la conversazione con un singolo client: a ogni domanda
  * risponde con una frase predefinita scelta a caso, come una palla 8.
  * Le altre personalita (ThreadRomano, ThreadImprenditore, ThreadTrio)
- * estendono questa classe e cambiano solo il saluto e le risposte.
+ * estendono questa classe: cambiano saluto e risposte e, se serve,
+ * ridefiniscono gestisci() per avere un comportamento tutto loro.
+ *
+ * Non scrive piu' sul socket in modo autonomo: usa i flussi ricevuti da
+ * ThreadScelta, cosi' si puo' tornare al menu senza perdere la connessione.
  */
 public class ThreadOracolo extends Thread {
+    /** Come finisce la conversazione con questa personalita'. */
+    public enum Esito { CONTINUA, FINE, CAMBIA }
+
     private static final String SALUTO_CLASSICO =
-            "Sono l'Oracolo. Fai una domanda (scrivi 'fine' per uscire).";
+            "Sono l'Oracolo. Fai una domanda (scrivi 'cambia' per cambiare oracolo, 'fine' per uscire).";
 
     private static final String[] RISPOSTE_CLASSICHE = {
         // positive
@@ -60,35 +65,41 @@ public class ThreadOracolo extends Thread {
         this.risposte = risposte;
     }
 
-    @Override
-    public void run() {
+    /**
+     * Conversa con il client finche' scrive "fine" (esce) o "cambia" (torna al menu).
+     * Non chiude il socket: ci pensa ThreadScelta.
+     */
+    public Esito conversa(BufferedReader in, PrintWriter out) throws IOException {
         String client = socket.getInetAddress() + ":" + socket.getPort();
-        try (Socket s = socket;
-             BufferedReader in = new BufferedReader(
-                     new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8));
-             PrintWriter out = new PrintWriter(s.getOutputStream(), true, StandardCharsets.UTF_8)) {
+        out.println(saluto);
 
-            out.println(saluto);
-
-            String domanda;
-            while ((domanda = in.readLine()) != null) {
-                domanda = domanda.trim();
-                if (domanda.equalsIgnoreCase("fine")) break;
-                if (domanda.isEmpty()) {
-                    out.println("Devi farmi una domanda.");
-                    continue;
-                }
-                System.out.println("Domanda da " + client + ": " + domanda);
-                out.println(rispondi());
-                if (out.checkError()) break; // il client si e disconnesso
+        String domanda;
+        while ((domanda = in.readLine()) != null) {
+            domanda = domanda.trim();
+            if (domanda.equalsIgnoreCase("fine")) return Esito.FINE;
+            if (domanda.equalsIgnoreCase("cambia")) return Esito.CAMBIA;
+            if (domanda.isEmpty()) {
+                out.println("Devi farmi una domanda.");
+                continue;
             }
-        } catch (IOException e) {
-            System.out.println("Errore con " + client + ": " + e.getMessage());
+            System.out.println("Domanda da " + client + ": " + domanda);
+            Esito esito = gestisci(domanda, in, out);
+            if (out.checkError()) return Esito.FINE; // il client si e disconnesso
+            if (esito != Esito.CONTINUA) return esito;
         }
-        System.out.println("Client disconnesso: " + client);
+        return Esito.FINE;
     }
 
-    private String rispondi() {
+    /**
+     * Cosa fare a ogni domanda. Di base risponde a caso; le personalita
+     * possono ridefinirlo (l'imprenditore, per esempio, chiede soldi).
+     */
+    protected Esito gestisci(String domanda, BufferedReader in, PrintWriter out) throws IOException {
+        out.println(rispondi());
+        return Esito.CONTINUA;
+    }
+
+    protected String rispondi() {
         return risposte[ThreadLocalRandom.current().nextInt(risposte.length)];
     }
 }
