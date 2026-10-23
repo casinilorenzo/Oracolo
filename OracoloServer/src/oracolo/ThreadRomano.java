@@ -17,9 +17,14 @@ public class ThreadRomano extends ThreadOracolo {
         "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"
     };
 
+    public static final String DESCRIZIONE =
+            "Oracolo Romano: risponde come un antico romano. Dopo 3 o 4 domande ti sfida al Colosseo: "
+            + "scrivi un numero da I a X in numeri romani e lui ne estrae uno a caso. "
+            + "Se sono uguali hai perso e devi cambiare oracolo; se sono diversi hai vinto e puoi continuare.";
+
     private static final String SALUTO =
             "Ave, cittadino! Sono l'Oracolo di Roma. Poni la tua domanda "
-            + "(scrivi 'cambia' per cambiare oracolo, 'fine' per congedarti).";
+            + "(scrivi 'help' per l'aiuto, 'cambia' per cambiare oracolo, 'fine' per congedarti).";
 
     private static final String[] RISPOSTE = {
         // positive
@@ -54,6 +59,11 @@ public class ThreadRomano extends ThreadOracolo {
         super(socket, SALUTO, RISPOSTE);
     }
 
+    @Override
+    protected String descrizione() {
+        return DESCRIZIONE;
+    }
+
     /** 3 o 4 domande. */
     private static int nuovoLimite() {
         return ThreadLocalRandom.current().nextInt(3, 5);
@@ -82,6 +92,12 @@ public class ThreadRomano extends ThreadOracolo {
             riga = riga.trim();
             if (riga.equalsIgnoreCase("fine")) return Esito.FINE;
             if (riga.equalsIgnoreCase("cambia")) return Esito.CAMBIA;
+            if (riga.equalsIgnoreCase("help")) {
+                stampaComandi(out);
+                out.println("Sfida al Colosseo -> scrivi un numero romano da I a X (I, II, III, IV, V, VI, VII, VIII, IX, X). "
+                        + "Se e uguale a quello estratto da me hai perso e torni al menu, altrimenti continui a parlare con me.");
+                continue;
+            }
 
             int tuo = indiceRomano(riga);
             if (tuo < 0) {

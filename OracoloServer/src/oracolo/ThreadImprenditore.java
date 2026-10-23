@@ -16,9 +16,14 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ThreadImprenditore extends ThreadOracolo {
     private static final double BONIFICO_MINIMO = 10000;
 
+    public static final String DESCRIZIONE =
+            "Oracolo Imprenditore milanese: risponde come un imprenditore di Milano. Dopo 3 o 4 domande "
+            + "dice che deve andare a fatturare: per continuare devi fargli un bonifico di almeno 10000 euro "
+            + "(scrivi solo l'importo; se e meno ne chiede un altro), oppure scrivi 'cambia' per cambiare oracolo.";
+
     private static final String SALUTO =
             "Buongiorno, sono l'Oracolo e a Milano il tempo e denaro. "
-            + "Fai la tua domanda (scrivi 'cambia' per cambiare oracolo, 'fine' per uscire).";
+            + "Fai la tua domanda (scrivi 'help' per l'aiuto, 'cambia' per cambiare oracolo, 'fine' per uscire).";
 
     private static final String[] RISPOSTE = {
         // positive
@@ -53,6 +58,11 @@ public class ThreadImprenditore extends ThreadOracolo {
         super(socket, SALUTO, RISPOSTE);
     }
 
+    @Override
+    protected String descrizione() {
+        return DESCRIZIONE;
+    }
+
     /** 3 o 4 domande. */
     private static int nuovoLimite() {
         return ThreadLocalRandom.current().nextInt(3, 5);
@@ -79,6 +89,12 @@ public class ThreadImprenditore extends ThreadOracolo {
             riga = riga.trim();
             if (riga.equalsIgnoreCase("fine")) return Esito.FINE;
             if (riga.equalsIgnoreCase("cambia")) return Esito.CAMBIA;
+            if (riga.equalsIgnoreCase("help")) {
+                stampaComandi(out);
+                out.println("Bonifico -> scrivi solo l'importo in euro (minimo 10000), ad esempio 10000 oppure 12500,50. "
+                        + "Se e meno di 10000 ne chiedo un altro; appena arriva una cifra valida rispondo alla tua domanda.");
+                continue;
+            }
 
             double importo = leggiImporto(riga);
             if (importo < 0) {

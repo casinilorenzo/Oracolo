@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Gestisce la conversazione con un singolo client: a ogni domanda
  * risponde con una frase predefinita scelta a caso, come una palla 8.
- * Le altre personalita (ThreadRomano, ThreadImprenditore, ThreadTrio)
+ * Le altre personalita (ThreadRomano, ThreadImprenditore)
  * estendono questa classe: cambiano saluto e risposte e, se serve,
  * ridefiniscono gestisci() per avere un comportamento tutto loro.
  *
@@ -20,8 +20,12 @@ public class ThreadOracolo extends Thread {
     /** Come finisce la conversazione con questa personalita'. */
     public enum Esito { CONTINUA, FINE, CAMBIA }
 
+    public static final String DESCRIZIONE_CLASSICO =
+            "Oracolo Classico: risponde a ogni domanda con una frase a caso (si, no o forse), "
+            + "come una palla 8. Nessuna regola particolare.";
+
     private static final String SALUTO_CLASSICO =
-            "Sono l'Oracolo. Fai una domanda (scrivi 'cambia' per cambiare oracolo, 'fine' per uscire).";
+            "Sono l'Oracolo. Fai una domanda (scrivi 'help' per l'aiuto, 'cambia' per cambiare oracolo, 'fine' per uscire).";
 
     private static final String[] RISPOSTE_CLASSICHE = {
         // positive
@@ -67,6 +71,7 @@ public class ThreadOracolo extends Thread {
 
     /**
      * Conversa con il client finche' scrive "fine" (esce) o "cambia" (torna al menu).
+     * "help" mostra l'aiuto e la conversazione prosegue.
      * Non chiude il socket: ci pensa ThreadScelta.
      */
     public Esito conversa(BufferedReader in, PrintWriter out) throws IOException {
@@ -78,6 +83,10 @@ public class ThreadOracolo extends Thread {
             domanda = domanda.trim();
             if (domanda.equalsIgnoreCase("fine")) return Esito.FINE;
             if (domanda.equalsIgnoreCase("cambia")) return Esito.CAMBIA;
+            if (domanda.equalsIgnoreCase("help")) {
+                stampaAiuto(out);
+                continue;
+            }
             if (domanda.isEmpty()) {
                 out.println("Devi farmi una domanda.");
                 continue;
@@ -101,5 +110,28 @@ public class ThreadOracolo extends Thread {
 
     protected String rispondi() {
         return risposte[ThreadLocalRandom.current().nextInt(risposte.length)];
+    }
+
+    /** Descrizione di questa personalita': le sottoclassi la ridefiniscono. */
+    protected String descrizione() {
+        return DESCRIZIONE_CLASSICO;
+    }
+
+    /** Aiuto durante la conversazione: comandi + regole dell'oracolo attuale. */
+    protected void stampaAiuto(PrintWriter out) {
+        stampaComandi(out);
+        out.println("Oracolo attuale -> " + descrizione());
+    }
+
+    /** Elenco dei comandi disponibili, uguale per tutti. */
+    public static void stampaComandi(PrintWriter out) {
+        out.println("=== AIUTO ===");
+        out.println("Come funziona: scegli un oracolo dal menu (scrivendo il suo numero), "
+                + "poi fagli una domanda a cui si puo rispondere si o no: lui ti risponde.");
+        out.println("Comandi (puoi scriverli in qualsiasi momento, anche maiuscoli):");
+        out.println("  help   -> mostra questo aiuto");
+        out.println("  cambia -> torna al menu per scegliere un altro oracolo");
+        out.println("  fine   -> chiude la connessione ed esce");
+        out.println("Nel menu: 1, 2 o 3 per scegliere l'oracolo, 'help' per l'aiuto, 'fine' per uscire.");
     }
 }

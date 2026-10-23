@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 public class ThreadScelta extends Thread {
     private static final String MENU =
             "Scegli l'oracolo: 1 = Classico, 2 = Romano antico, "
-            + "3 = Imprenditore milanese, 4 = Trio comico (scrivi 'fine' per uscire).";
+            + "3 = Imprenditore milanese (scrivi 'help' per l'aiuto, 'fine' per uscire).";
 
     private final Socket socket;
 
@@ -38,9 +38,15 @@ public class ThreadScelta extends Thread {
                 scelta = scelta.trim();
                 if (scelta.equalsIgnoreCase("fine")) break;
 
+                if (scelta.equalsIgnoreCase("help")) {
+                    stampaAiutoMenu(out);
+                    out.println(MENU);
+                    continue;
+                }
+
                 ThreadOracolo oracolo = creaOracolo(scelta);
                 if (oracolo == null) {
-                    out.println("Scelta non valida: scrivi un numero da 1 a 4.");
+                    out.println("Scelta non valida: scrivi un numero da 1 a 3 (o 'help' per l'aiuto).");
                     continue;
                 }
 
@@ -55,6 +61,15 @@ public class ThreadScelta extends Thread {
             System.out.println("Errore con " + client + ": " + e.getMessage());
         }
         System.out.println("Client disconnesso: " + client);
+    }
+
+    /** Aiuto dal menu: comandi + descrizione di tutti gli oracoli. */
+    private void stampaAiutoMenu(PrintWriter out) {
+        ThreadOracolo.stampaComandi(out);
+        out.println("Gli oracoli:");
+        out.println("  1 -> " + ThreadOracolo.DESCRIZIONE_CLASSICO);
+        out.println("  2 -> " + ThreadRomano.DESCRIZIONE);
+        out.println("  3 -> " + ThreadImprenditore.DESCRIZIONE);
     }
 
     private ThreadOracolo creaOracolo(String scelta) {
