@@ -7,7 +7,7 @@ public class Client {
     public static void main(String[] args) {
         // Senza argomenti si collega al server sullo stesso computer.
         String host = args.length > 0 ? args[0] : "127.0.0.1";
-        final int PORT = 5556;
+        final int PORT = 5555;
         try (Socket socket = new Socket(host, PORT)) {
             System.out.println("Connesso al server " + host + ":" + PORT);
             new Threads(socket).avvia();
