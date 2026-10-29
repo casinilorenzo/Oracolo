@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class Server {
     public static void main(String[] args) {
-        final int PORT = 5556;
+        final int PORT = 5555;
         try (ServerSocket server = new ServerSocket(PORT)) {
             System.out.println("Oracolo in ascolto sulla porta " + PORT);
             // Il server resta acceso e ogni client e gestito da un thread proprio.
