@@ -8,65 +8,30 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Gestisce la conversazione con un singolo client: a ogni domanda
- * risponde con una frase predefinita scelta a caso, come una palla 8.
- * Le altre personalita (ThreadRomano, ThreadImprenditore)
- * estendono questa classe: cambiano saluto e risposte e, se serve,
- * ridefiniscono gestisci() per avere un comportamento tutto loro.
- *
- * Non scrive piu' sul socket in modo autonomo: usa i flussi ricevuti da
- * ThreadScelta, cosi' si puo' tornare al menu senza perdere la connessione.
+ * risponde con una frase presa dal file oracoli.json, scelta a caso.
+ * Le altre personalita estendono questa classe e ridefiniscono gestisci().
  */
 public class ThreadOracolo extends Thread {
-    /** Come finisce la conversazione con questa personalita'. */
+    /** Come finisce la conversazione con questa personalita. */
     public enum Esito { CONTINUA, FINE, CAMBIA }
-
-    public static final String DESCRIZIONE_CLASSICO =
-            "Oracolo Classico: risponde a ogni domanda con una frase a caso (si, no o forse), "
-            + "come una palla 8. Nessuna regola particolare.";
-
-    private static final String SALUTO_CLASSICO =
-            "Sono l'Oracolo. Fai una domanda (scrivi 'help' per l'aiuto, 'cambia' per cambiare oracolo, 'fine' per uscire).";
-
-    private static final String[] RISPOSTE_CLASSICHE = {
-        // positive
-        "E certo.",
-        "E decisamente cosi.",
-        "Senza dubbio.",
-        "Si, senza dubbio.",
-        "Puoi contarci.",
-        "Per come la vedo io, si.",
-        "Molto probabilmente.",
-        "Le prospettive sono buone.",
-        "Si.",
-        "I segni indicano di si.",
-        // incerte
-        "Risposta confusa, riprova.",
-        "Chiedimelo piu tardi.",
-        "Meglio non dirtelo ora.",
-        "Non posso prevederlo adesso.",
-        "Concentrati e chiedi di nuovo.",
-        // negative
-        "Non contarci.",
-        "La mia risposta e no.",
-        "Le mie fonti dicono di no.",
-        "Le prospettive non sono buone.",
-        "E molto dubbio."
-    };
 
     private final Socket socket;
     private final String saluto;
     private final String[] risposte;
+    private final String descrizione;
 
     /** Oracolo classico. */
     public ThreadOracolo(Socket socket) {
-        this(socket, SALUTO_CLASSICO, RISPOSTE_CLASSICHE);
+        this(socket, "classico");
     }
 
-    /** Usato dalle personalita che estendono questa classe. */
-    protected ThreadOracolo(Socket socket, String saluto, String[] risposte) {
+    /** Usato da tutte le personalita: la chiave e quella presente in oracoli.json. */
+    protected ThreadOracolo(Socket socket, String chiave) {
+        Oracoli.Dati dati = Oracoli.get(chiave);
         this.socket = socket;
-        this.saluto = saluto;
-        this.risposte = risposte;
+        this.saluto = dati.saluto;
+        this.risposte = dati.risposte.toArray(new String[0]);
+        this.descrizione = dati.descrizione;
     }
 
     /**
@@ -93,16 +58,13 @@ public class ThreadOracolo extends Thread {
             }
             System.out.println("Domanda da " + client + ": " + domanda);
             Esito esito = gestisci(domanda, in, out);
-            if (out.checkError()) return Esito.FINE; // il client si e disconnesso
+            if (out.checkError()) return Esito.FINE;
             if (esito != Esito.CONTINUA) return esito;
         }
         return Esito.FINE;
     }
 
-    /**
-     * Cosa fare a ogni domanda. Di base risponde a caso; le personalita
-     * possono ridefinirlo (l'imprenditore, per esempio, chiede soldi).
-     */
+    /** Di base risponde a caso; le personalita possono ridefinirlo. */
     protected Esito gestisci(String domanda, BufferedReader in, PrintWriter out) throws IOException {
         out.println(rispondi());
         return Esito.CONTINUA;
@@ -112,9 +74,8 @@ public class ThreadOracolo extends Thread {
         return risposte[ThreadLocalRandom.current().nextInt(risposte.length)];
     }
 
-    /** Descrizione di questa personalita': le sottoclassi la ridefiniscono. */
     protected String descrizione() {
-        return DESCRIZIONE_CLASSICO;
+        return descrizione;
     }
 
     /** Aiuto durante la conversazione: comandi + regole dell'oracolo attuale. */

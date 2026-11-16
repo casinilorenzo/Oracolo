@@ -8,60 +8,18 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Oracolo che risponde come un antico romano.
- * Dopo 3 o 4 domande si ferma e ti sfida al Colosseo: scrivi un numero da I a X
- * in numeri romani e lui ne estrae uno a caso. Se sono uguali hai perso e devi
- * cambiare personalita'; altrimenti puoi continuare a parlare con lui.
+ * Dopo 3 o 4 domande si ferma e ti sfida al Colosseo.
  */
 public class ThreadRomano extends ThreadOracolo {
     private static final String[] NUMERI_ROMANI = {
         "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"
     };
 
-    public static final String DESCRIZIONE =
-            "Oracolo Romano: risponde come un antico romano. Dopo 3 o 4 domande ti sfida al Colosseo: "
-            + "scrivi un numero da I a X in numeri romani e lui ne estrae uno a caso. "
-            + "Se sono uguali hai perso e devi cambiare oracolo; se sono diversi hai vinto e puoi continuare.";
-
-    private static final String SALUTO =
-            "Ave, cittadino! Sono l'Oracolo di Roma. Poni la tua domanda "
-            + "(scrivi 'help' per l'aiuto, 'cambia' per cambiare oracolo, 'fine' per congedarti).";
-
-    private static final String[] RISPOSTE = {
-        // positive
-        "Cosi hanno decretato gli dei: e certo.",
-        "Ave! Gli auspici sono favorevoli.",
-        "Alea iacta est: procedi senza timore.",
-        "Per Giove, senza alcun dubbio.",
-        "Le aquile volano a tuo favore.",
-        "Veni, vidi, vici: andra tutto bene.",
-        "Il Senato approva: si.",
-        "Gli aruspici hanno letto le viscere: esito felice.",
-        "Gli dei sorridono, o cittadino.",
-        "Vincerai, come le legioni di Cesare.",
-        // incerte
-        "Le viscere del pollo sono poco chiare: sacrifica e richiedi.",
-        "Gli dei dormono, interrogali al mattino.",
-        "Il fumo dell'incenso e confuso, riprova.",
-        "Giove tace per ora.",
-        "Attendi il prossimo mercato e chiedi ancora.",
-        // negative
-        "Per Plutone, no.",
-        "Gli auguri sono funesti.",
-        "Neanche Ercole ci riuscirebbe: la risposta e no.",
-        "Il Senato respinge la richiesta.",
-        "I corvi volano a sinistra: pessimo segno."
-    };
-
     // Quante risposte restano prima della sfida al Colosseo.
     private int domandeRimaste = nuovoLimite();
 
     public ThreadRomano(Socket socket) {
-        super(socket, SALUTO, RISPOSTE);
-    }
-
-    @Override
-    protected String descrizione() {
-        return DESCRIZIONE;
+        super(socket, "romano");
     }
 
     /** 3 o 4 domande. */

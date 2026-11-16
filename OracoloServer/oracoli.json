@@ -1,0 +1,80 @@
+{
+  "classico": {
+    "descrizione": "Oracolo Classico: risponde a ogni domanda con una frase a caso (si, no o forse), come una palla 8. Nessuna regola particolare.",
+    "saluto": "Sono l'Oracolo. Fai una domanda (scrivi 'help' per l'aiuto, 'cambia' per cambiare oracolo, 'fine' per uscire).",
+    "risposte": [
+      "E certo.",
+      "E decisamente cosi.",
+      "Senza dubbio.",
+      "Si, senza dubbio.",
+      "Puoi contarci.",
+      "Per come la vedo io, si.",
+      "Molto probabilmente.",
+      "Le prospettive sono buone.",
+      "Si.",
+      "I segni indicano di si.",
+      "Risposta confusa, riprova.",
+      "Chiedimelo piu tardi.",
+      "Meglio non dirtelo ora.",
+      "Non posso prevederlo adesso.",
+      "Concentrati e chiedi di nuovo.",
+      "Non contarci.",
+      "La mia risposta e no.",
+      "Le mie fonti dicono di no.",
+      "Le prospettive non sono buone.",
+      "E molto dubbio."
+    ]
+  },
+  "romano": {
+    "descrizione": "Oracolo Romano: risponde come un antico romano. Dopo 3 o 4 domande ti sfida al Colosseo: scrivi un numero da I a X in numeri romani e lui ne estrae uno a caso. Se sono uguali hai perso e devi cambiare oracolo; se sono diversi hai vinto e puoi continuare.",
+    "saluto": "Ave, cittadino! Sono l'Oracolo di Roma. Poni la tua domanda (scrivi 'help' per l'aiuto, 'cambia' per cambiare oracolo, 'fine' per congedarti).",
+    "risposte": [
+      "Cosi hanno decretato gli dei: e certo.",
+      "Ave! Gli auspici sono favorevoli.",
+      "Alea iacta est: procedi senza timore.",
+      "Per Giove, senza alcun dubbio.",
+      "Le aquile volano a tuo favore.",
+      "Veni, vidi, vici: andra tutto bene.",
+      "Il Senato approva: si.",
+      "Gli aruspici hanno letto le viscere: esito felice.",
+      "Gli dei sorridono, o cittadino.",
+      "Vincerai, come le legioni di Cesare.",
+      "Le viscere del pollo sono poco chiare: sacrifica e richiedi.",
+      "Gli dei dormono, interrogali al mattino.",
+      "Il fumo dell'incenso e confuso, riprova.",
+      "Giove tace per ora.",
+      "Attendi il prossimo mercato e chiedi ancora.",
+      "Per Plutone, no.",
+      "Gli auguri sono funesti.",
+      "Neanche Ercole ci riuscirebbe: la risposta e no.",
+      "Il Senato respinge la richiesta.",
+      "I corvi volano a sinistra: pessimo segno."
+    ]
+  },
+  "imprenditore": {
+    "descrizione": "Oracolo Imprenditore milanese: risponde come un imprenditore di Milano. Dopo 3 o 4 domande dice che deve andare a fatturare: per continuare devi fargli un bonifico di almeno 10000 euro (scrivi solo l'importo; se e meno ne chiede un altro), oppure scrivi 'cambia' per cambiare oracolo.",
+    "saluto": "Buongiorno, sono l'Oracolo e a Milano il tempo e denaro. Fai la tua domanda (scrivi 'help' per l'aiuto, 'cambia' per cambiare oracolo, 'fine' per uscire).",
+    "risposte": [
+      "Certo, e un business sicuro: spingi!",
+      "Assolutamente si, ci metto la firma.",
+      "Ottimo ritorno sull'investimento: vai tranquillo.",
+      "E un'opportunita da cogliere subito, ASAP.",
+      "Fidati, ho fiuto per gli affari: si.",
+      "Il mercato e dalla tua parte, spingi sull'acceleratore.",
+      "Win-win: e un si convinto.",
+      "Si, e ti offro pure l'aperitivo ai Navigli.",
+      "Numeri alla mano, i segni sono positivi.",
+      "Perfetto, facciamo squadra e portiamolo a casa.",
+      "Devo sentire il mio commercialista, riprova.",
+      "Ne parliamo dopo il meeting, richiedimelo.",
+      "Facciamo una call lunedi e vediamo.",
+      "Non ho abbastanza dati, mandami un report.",
+      "Ho l'agenda piena: chiedimelo piu tardi.",
+      "No, il budget non regge.",
+      "Non e scalabile: lascia perdere.",
+      "Per me e un flop, non investirei un euro.",
+      "Le previsioni sono in rosso: no.",
+      "Il mio avvocato dice di no, e io mi fido."
+    ]
+  }
+}

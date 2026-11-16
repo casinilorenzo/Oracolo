@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Gestisce la connessione di un client: chiede quale oracolo vuole,
  * gli passa la conversazione e, se il client scrive "cambia", torna
- * al menu per scegliere un'altra personalita'.
+ * al menu per scegliere un'altra personalita.
  */
 public class ThreadScelta extends Thread {
     private static final String MENU =
@@ -63,13 +63,13 @@ public class ThreadScelta extends Thread {
         System.out.println("Client disconnesso: " + client);
     }
 
-    /** Aiuto dal menu: comandi + descrizione di tutti gli oracoli. */
+    /** Aiuto dal menu: comandi + descrizione di tutti gli oracoli, letta da oracoli.json. */
     private void stampaAiutoMenu(PrintWriter out) {
         ThreadOracolo.stampaComandi(out);
         out.println("Gli oracoli:");
-        out.println("  1 -> " + ThreadOracolo.DESCRIZIONE_CLASSICO);
-        out.println("  2 -> " + ThreadRomano.DESCRIZIONE);
-        out.println("  3 -> " + ThreadImprenditore.DESCRIZIONE);
+        out.println("  1 -> " + Oracoli.get("classico").descrizione);
+        out.println("  2 -> " + Oracoli.get("romano").descrizione);
+        out.println("  3 -> " + Oracoli.get("imprenditore").descrizione);
     }
 
     private ThreadOracolo creaOracolo(String scelta) {

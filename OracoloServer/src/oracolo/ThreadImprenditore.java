@@ -9,58 +9,16 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Oracolo che risponde come un imprenditore milanese.
- * Dopo 3 o 4 domande dice che deve andare a fatturare: per continuare
- * bisogna fargli un bonifico di almeno 10000 euro (se e' meno, ne chiede
- * un altro), oppure si cambia personalita'.
+ * Dopo 3 o 4 domande chiede un bonifico di almeno 10000 euro per continuare.
  */
 public class ThreadImprenditore extends ThreadOracolo {
     private static final double BONIFICO_MINIMO = 10000;
-
-    public static final String DESCRIZIONE =
-            "Oracolo Imprenditore milanese: risponde come un imprenditore di Milano. Dopo 3 o 4 domande "
-            + "dice che deve andare a fatturare: per continuare devi fargli un bonifico di almeno 10000 euro "
-            + "(scrivi solo l'importo; se e meno ne chiede un altro), oppure scrivi 'cambia' per cambiare oracolo.";
-
-    private static final String SALUTO =
-            "Buongiorno, sono l'Oracolo e a Milano il tempo e denaro. "
-            + "Fai la tua domanda (scrivi 'help' per l'aiuto, 'cambia' per cambiare oracolo, 'fine' per uscire).";
-
-    private static final String[] RISPOSTE = {
-        // positive
-        "Certo, e un business sicuro: spingi!",
-        "Assolutamente si, ci metto la firma.",
-        "Ottimo ritorno sull'investimento: vai tranquillo.",
-        "E un'opportunita da cogliere subito, ASAP.",
-        "Fidati, ho fiuto per gli affari: si.",
-        "Il mercato e dalla tua parte, spingi sull'acceleratore.",
-        "Win-win: e un si convinto.",
-        "Si, e ti offro pure l'aperitivo ai Navigli.",
-        "Numeri alla mano, i segni sono positivi.",
-        "Perfetto, facciamo squadra e portiamolo a casa.",
-        // incerte
-        "Devo sentire il mio commercialista, riprova.",
-        "Ne parliamo dopo il meeting, richiedimelo.",
-        "Facciamo una call lunedi e vediamo.",
-        "Non ho abbastanza dati, mandami un report.",
-        "Ho l'agenda piena: chiedimelo piu tardi.",
-        // negative
-        "No, il budget non regge.",
-        "Non e scalabile: lascia perdere.",
-        "Per me e un flop, non investirei un euro.",
-        "Le previsioni sono in rosso: no.",
-        "Il mio avvocato dice di no, e io mi fido."
-    };
 
     // Quante risposte gratis restano prima che l'imprenditore chieda soldi.
     private int domandeRimaste = nuovoLimite();
 
     public ThreadImprenditore(Socket socket) {
-        super(socket, SALUTO, RISPOSTE);
-    }
-
-    @Override
-    protected String descrizione() {
-        return DESCRIZIONE;
+        super(socket, "imprenditore");
     }
 
     /** 3 o 4 domande. */
@@ -75,11 +33,11 @@ public class ThreadImprenditore extends ThreadOracolo {
             out.println(rispondi());
             return Esito.CONTINUA;
         }
-        return chiediBonifico(domanda, in, out);
+        return chiediBonifico(in, out);
     }
 
     /** Blocca la conversazione finche' non arriva un bonifico valido, o si cambia/esce. */
-    private Esito chiediBonifico(String domanda, BufferedReader in, PrintWriter out) throws IOException {
+    private Esito chiediBonifico(BufferedReader in, PrintWriter out) throws IOException {
         out.println("Scusa, non posso piu rispondere: devo andare a fatturare e tu mi stai "
                 + "facendo perdere tempo e soldi! Se vuoi continuare, fammi un bonifico: "
                 + "scrivi l'importo in euro (minimo 10000). Oppure scrivi 'cambia' per cambiare oracolo.");
@@ -119,7 +77,7 @@ public class ThreadImprenditore extends ThreadOracolo {
         if (t.contains(",")) {
             t = t.replace(".", "").replace(",", ".");
         } else if (t.matches("\\d{1,3}(\\.\\d{3})+")) {
-            t = t.replace(".", ""); // separatore delle migliaia
+            t = t.replace(".", "");
         }
         if (!t.matches("\\d+(\\.\\d+)?")) return -1;
         try {
